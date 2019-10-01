@@ -5,14 +5,15 @@
  */
 package DistanceConverter;
 
-import java.text.DecimalFormat;
+import java.awt.HeadlessException;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Maria
  */
 public class Interface extends javax.swing.JFrame {
-
     /**
      * Creates new form Interface
      */
@@ -73,6 +74,10 @@ public class Interface extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setText("Kilometros:");
 
+        jTextField1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jTextField2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
         jButton1.setText("Convierte");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -91,11 +96,6 @@ public class Interface extends javax.swing.JFrame {
         jLabel4.setText("1 milla terrestre =");
 
         jTextField3.setText("1.609344");
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
-            }
-        });
 
         jLabel5.setText("km");
 
@@ -138,7 +138,7 @@ public class Interface extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -157,17 +157,19 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Float coef = Float.valueOf(jTextField3.getText());
-        Float result;
+        try{
+            Double coef = Double.valueOf(jTextField3.getText());
         
-        if(jTextField2.getText().length() != 0){
-            result = Float.valueOf(jTextField2.getText())*coef;
-            jTextField1.setText(String.format("%.3f", result));
+            if (jTextField2.getText().length() != 0){
+                jTextField1.setText(String.format("%.3f", milesToKm(coef)));
+            }
+
+            else {
+                jTextField2.setText(String.format("%.3f", kmToMiles(coef)));
+            }
         }
-        
-        else {
-            result = Float.valueOf(jTextField1.getText())/coef;
-            jTextField2.setText(String.format("%.3f", result));
+        catch (NumberFormatException e){
+            notDoubleValueIntroducedError();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -175,10 +177,6 @@ public class Interface extends javax.swing.JFrame {
         jTextField1.setText("");
         jTextField2.setText("");
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -228,4 +226,19 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
+
+    private void notDoubleValueIntroducedError() throws HeadlessException {
+        JOptionPane.showMessageDialog(new JFrame(), "Introduzca valores tipo doble.");
+    }
+
+    private Double milesToKm(Double coef) {
+        Double result = Double.valueOf(jTextField2.getText())*coef;
+        return result;
+    }
+
+    private Double kmToMiles(Double coef) {
+        Double result = Double.valueOf(jTextField1.getText())/coef;
+        return result;
+    }
 }
+    
