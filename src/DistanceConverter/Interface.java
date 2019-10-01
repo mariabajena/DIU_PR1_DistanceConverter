@@ -8,12 +8,16 @@ package DistanceConverter;
 import java.awt.HeadlessException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /**
  *
  * @author Maria
  */
 public class Interface extends javax.swing.JFrame {
+    
+    Double coef;
+    Double result;
     /**
      * Creates new form Interface
      */
@@ -95,8 +99,15 @@ public class Interface extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("1 milla terrestre =");
 
+        jTextField3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTextField3.setText("1.609344");
+        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField3ActionPerformed(evt);
+            }
+        });
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("km");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -157,26 +168,17 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try{
-            Double coef = Double.valueOf(jTextField3.getText());
-        
-            if (jTextField2.getText().length() != 0){
-                jTextField1.setText(String.format("%.3f", milesToKm(coef)));
-            }
-
-            else {
-                jTextField2.setText(String.format("%.3f", kmToMiles(coef)));
-            }
-        }
-        catch (NumberFormatException e){
-            notDoubleValueIntroducedError();
-        }
+        calculateResult();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         jTextField1.setText("");
         jTextField2.setText("");
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+
+    }//GEN-LAST:event_jTextField3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -227,18 +229,71 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
 
-    private void notDoubleValueIntroducedError() throws HeadlessException {
-        JOptionPane.showMessageDialog(new JFrame(), "Introduzca valores tipo doble.");
-    }
 
-    private Double milesToKm(Double coef) {
+    private Double milesToKm() {
         Double result = Double.valueOf(jTextField2.getText())*coef;
         return result;
     }
 
-    private Double kmToMiles(Double coef) {
+    private Double kmToMiles() {
         Double result = Double.valueOf(jTextField1.getText())/coef;
         return result;
+    }
+
+    private void calculateResult() {
+        try{
+            this.coef = Double.valueOf(jTextField3.getText());
+            if(coef < 0) throw new ImpossibleRangeException();
+            
+            if ((jTextField1.getText().length() == 0) && (jTextField2.getText().length() == 0)) throw new EmptyStringException();
+            if ((jTextField1.getText().length() != 0) && (jTextField2.getText().length() != 0)) throw new BothBoxesFullException();
+            
+            if (jTextField2.getText().length() != 0){
+                this.result = milesToKm();
+                if(result < 0) throw new ImpossibleRangeException();
+                writeResult(jTextField1);               
+            }
+
+            else {
+                this.result = kmToMiles();
+                if(result < 0) throw new ImpossibleRangeException();
+                writeResult(jTextField2);
+            }
+        }
+        
+        catch (EmptyStringException | BothBoxesFullException | ImpossibleRangeException e){}
+        catch (NumberFormatException e){
+            notDoubleValueIntroducedError();
+        }
+    }
+
+    private void writeResult(JTextField textField) {
+        textField.setText(String.format("%.3f", result));
+    }
+
+     private void notDoubleValueIntroducedError() throws HeadlessException {
+        JOptionPane.showMessageDialog(new JFrame(), "Valor incorrecto! Introduce valores tipo doble.");
+    }
+    
+    public class BothBoxesFullException extends Exception {
+
+        public BothBoxesFullException() {
+            JOptionPane.showMessageDialog(new JFrame(), "Borra los resultados anteriores!");
+        }
+    }
+
+    public class EmptyStringException extends Exception {
+
+        public EmptyStringException() {
+            JOptionPane.showMessageDialog(new JFrame(), "Introduce el valor para convertir!");
+        }
+    }
+
+    public class ImpossibleRangeException extends Exception {
+
+        public ImpossibleRangeException() {
+            JOptionPane.showMessageDialog(new JFrame(), "Los valores introducidos no pueden ser menores que 0!");
+        }
     }
 }
     
